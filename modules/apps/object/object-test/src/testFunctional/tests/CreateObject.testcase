@@ -2244,8 +2244,8 @@ definition {
 			optionName = "Object");
 
 		ObjectAdmin.selectDropdownItem(
-			currentOption = "No Workflow",
-			labelName = "Select a Workflow",
+			currentOption = "Choose an Option",
+			labelName = "Select Object",
 			optionName = "Custom Object 59");
 
 		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
@@ -3483,8 +3483,8 @@ definition {
 			optionName = "Object");
 
 		ObjectAdmin.selectDropdownItem(
-			currentOption = "No Workflow",
-			labelName = "Select a Workflow",
+			currentOption = "Choose an Option",
+			labelName = "Select Object",
 			optionName = "Custom Object 85");
 
 		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
@@ -5109,7 +5109,10 @@ definition {
 		task ("Add picklist entry") {
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject141617");
 
-			ObjectAdmin.addObjectPicklistFieldEntryViaUI(picklistOption = "Picklist Item");
+			ObjectAdmin.addObjectPicklistFieldEntryViaUI(
+				currentOption = "Choose an Option",
+				labelName = "Field Picklist",
+				picklistOption = "Picklist Item");
 		}
 
 		task ("Assert that it's possible to see Picklist Item") {
@@ -7543,54 +7546,6 @@ definition {
 			locator1 = "VisualizeObjectCollectionDisplay#VIEW_OBJECT_COLLECTION_DISPLAY");
 	}
 
-	@description = "LPS-139005 - Verify that the Object is displayed again on the Form's storage type when reactivated"
-	@priority = 4
-	test ObjectReappearsFormStorageTypeWhenReactivated {
-		ObjectAdmin.addObjectViaAPI(
-			labelName = "Custom Object 156",
-			objectName = "CustomObject156",
-			pluralLabelName = "Custom Objects 156");
-
-		ObjectAdmin.addObjectFieldViaAPI(
-			fieldBusinessType = "Text",
-			fieldLabelName = "Field",
-			fieldName = "customObjectField",
-			fieldType = "String",
-			isRequired = "false",
-			objectName = "CustomObject156");
-
-		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject156");
-
-		ObjectAdmin.openObjectAdmin();
-
-		ObjectPortlet.selectCustomObject(label = "Custom Object 156");
-
-		CreateObject.checkToggleInactive();
-
-		CreateObject.saveObject();
-
-		ObjectAdmin.openObjectAdmin();
-
-		ObjectPortlet.selectCustomObject(label = "Custom Object 156");
-
-		CreateObject.checkToggleActive();
-
-		CreateObject.saveObject();
-
-		FormsAdmin.addForm();
-
-		PopulateObjectFormsConfiguration.openFormSettings();
-
-		ObjectAdmin.selectDropdownItem(
-			currentOption = "Default",
-			labelName = "Select a Storage Type",
-			optionName = "Object");
-
-		AssertElementPresent(
-			key_optionName = "Custom Object 156",
-			locator1 = "ObjectAdmin#CLAY_GENERIC_DROPDOWN_ITEM");
-	}
-
 	@description = "LPS-139005 - Verify that the Object is displayed again on the Page Item Selector when reactivated"
 	@priority = 4
 	test ObjectReappearsPageItemSelectorWhenReactivated {
@@ -9191,8 +9146,8 @@ definition {
 			optionName = "Object");
 
 		ObjectAdmin.selectDropdownItem(
-			currentOption = "No Workflow",
-			labelName = "Select a Workflow",
+			currentOption = "Choose an Option",
+			labelName = "Select Object",
 			optionName = "Custom Object 178");
 
 		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");

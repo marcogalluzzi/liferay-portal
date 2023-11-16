@@ -125,17 +125,52 @@ public class JobRestController {
 
 		JSONArray buildsJSONArray = new JSONArray();
 
-		for (BuildEntity buildEntity : jobEntity.getBuildEntities()) {
+		List<BuildEntity> buildEntities = new ArrayList<>(
+			jobEntity.getBuildEntities());
+
+		Collections.sort(
+			buildEntities,
+			new Comparator<BuildEntity>() {
+
+				@Override
+				public int compare(
+					BuildEntity buildEntity1, BuildEntity buildEntity2) {
+
+					if (buildEntity1.isInitialBuild() &&
+						buildEntity2.isInitialBuild()) {
+
+						return _compareBuildNames(buildEntity1, buildEntity2);
+					}
+
+					if (buildEntity1.isInitialBuild()) {
+						return -1;
+					}
+
+					if (buildEntity2.isInitialBuild()) {
+						return 1;
+					}
+
+					return _compareBuildNames(buildEntity1, buildEntity2);
+				}
+
+				private int _compareBuildNames(
+					BuildEntity buildEntity1, BuildEntity buildEntity2) {
+
+					String buildName1 = buildEntity1.getName();
+					String buildName2 = buildEntity2.getName();
+
+					return buildName1.compareTo(buildName2);
+				}
+
+			});
+
+		for (BuildEntity buildEntity : buildEntities) {
 			JSONObject buildJSONObject = buildEntity.getJSONObject();
 
-			List<BuildRunEntity> historyBuildRunEntities =
-				buildEntity.getHistoryBuildRunEntities();
+			BuildRunEntity latestBuildRunEntity =
+				buildEntity.getLatestBuildRunEntity();
 
-			if (!historyBuildRunEntities.isEmpty()) {
-				BuildRunEntity latestBuildRunEntity =
-					historyBuildRunEntities.get(
-						historyBuildRunEntities.size() - 1);
-
+			if (latestBuildRunEntity != null) {
 				buildJSONObject.put(
 					"latestDuration", latestBuildRunEntity.getDuration()
 				).put(
