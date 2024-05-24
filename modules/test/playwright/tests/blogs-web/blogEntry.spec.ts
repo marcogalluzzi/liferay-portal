@@ -64,6 +64,7 @@ const friendlyUrlCategories = ['category-1', 'category-2', 'category-3'];
 test('LPD-26752 Select categories for the custom friendly URL', async ({
 	apiHelpers,
 	blogsEditBlogEntryPage,
+	displayPageTemplatesPage,
 	page,
 	site,
 }) => {
@@ -81,6 +82,17 @@ test('LPD-26752 Select categories for the custom friendly URL', async ({
 			vocabularyId,
 		});
 	}
+
+	await displayPageTemplatesPage.goto(site.friendlyUrlPath);
+
+	const displayPageTemplateName = getRandomString();
+
+	await displayPageTemplatesPage.publishNewTemplate({
+		contentType: 'Blogs Entry',
+		name: displayPageTemplateName,
+	});
+
+	await displayPageTemplatesPage.markAsDefault(displayPageTemplateName);
 
 	await blogsEditBlogEntryPage.goto(site.friendlyUrlPath);
 
