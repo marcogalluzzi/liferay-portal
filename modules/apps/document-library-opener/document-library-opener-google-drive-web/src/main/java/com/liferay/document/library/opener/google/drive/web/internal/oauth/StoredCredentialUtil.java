@@ -117,7 +117,7 @@ public class StoredCredentialUtil {
 
 		Map<String, StoredCredential> storedCredentials =
 			_storedCredentials.computeIfAbsent(
-				companyId, key -> new ConcurrentHashMap<>());
+				companyId, absentKey -> new ConcurrentHashMap<>());
 
 		storedCredentials.put(key, storedCredential);
 	}
@@ -137,7 +137,7 @@ public class StoredCredentialUtil {
 	private static void _delete(long companyId, String key) {
 		Map<String, StoredCredential> storedCredentials =
 			_storedCredentials.computeIfAbsent(
-				companyId, key -> new ConcurrentHashMap<>());
+				companyId, absentKey -> new ConcurrentHashMap<>());
 
 		storedCredentials.remove(key);
 	}
