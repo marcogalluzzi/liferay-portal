@@ -289,7 +289,7 @@ paths:
                   schema:
                       type: string
             responses:
-                "200":
+                200:
                     content:
                         application/json:
                             schema:
@@ -317,7 +317,7 @@ paths:
                         schema:
                             $ref: "#/components/schemas/AssetLibrary"
             responses:
-                "200":
+                200:
                     content:
                         application/json:
                             schema:
@@ -341,7 +341,7 @@ paths:
                       format: int64
                       type: integer
             responses:
-                "204":
+                204:
                     content:
                         application/json: {}
                         application/xml: {}
@@ -372,7 +372,7 @@ paths:
                   schema:
                       type: string
             responses:
-                "200":
+                200:
                     content:
                         application/json:
                             schema:
@@ -404,7 +404,7 @@ paths:
                         schema:
                             $ref: "#/components/schemas/AssetLibrary"
             responses:
-                "200":
+                200:
                     content:
                         application/json:
                             schema:
@@ -436,7 +436,7 @@ paths:
                         schema:
                             $ref: "#/components/schemas/AssetLibrary"
             responses:
-                "200":
+                200:
                     content:
                         application/json:
                             schema:
@@ -488,7 +488,7 @@ paths:
                   schema:
                       type: string
             responses:
-                "200":
+                200:
                     content:
                         application/json:
                             schema:
@@ -522,7 +522,7 @@ paths:
                       format: int64
                       type: integer
             responses:
-                "204":
+                204:
                     content:
                         application/json: {}
                         application/xml: {}
@@ -547,7 +547,7 @@ paths:
                       format: int64
                       type: integer
             responses:
-                "200":
+                200:
                     content:
                         application/json:
                             schema:
@@ -595,7 +595,7 @@ paths:
                   schema:
                       type: string
             responses:
-                "200":
+                200:
                     content:
                         application/json:
                             schema:
@@ -625,7 +625,7 @@ paths:
                       format: int64
                       type: integer
             responses:
-                "204":
+                204:
                     content:
                         application/json: {}
                         application/xml: {}
@@ -650,7 +650,7 @@ paths:
                       format: int64
                       type: integer
             responses:
-                "200":
+                200:
                     content:
                         application/json:
                             schema:
@@ -698,7 +698,7 @@ paths:
                   schema:
                       type: string
             responses:
-                "200":
+                200:
                     content:
                         application/json:
                             schema:
@@ -728,7 +728,7 @@ paths:
                       format: int64
                       type: integer
             responses:
-                "204":
+                204:
                     content:
                         application/json: {}
                         application/xml: {}
@@ -753,7 +753,7 @@ paths:
                       format: int64
                       type: integer
             responses:
-                "200":
+                200:
                     content:
                         application/json:
                             schema:
