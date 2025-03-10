@@ -262,6 +262,8 @@ openapi: 3.0.1
 paths:
     "/asset-libraries":
         get:
+            description:
+                Retrieves the asset libraries. Results can be paginated, filtered, searched, and sorted.
             operationId: getAssetLibrariesPage
             parameters:
                 - in: query
@@ -284,6 +286,10 @@ paths:
                   name: pageSize
                   schema:
                       type: integer
+                - in: query
+                  name: search
+                  schema:
+                      type: string
                 - in: query
                   name: sort
                   schema:
@@ -331,7 +337,7 @@ paths:
     "/asset-libraries/{assetLibraryId}":
         delete:
             description:
-                Deletes the asset library and returns a 204 if the operation succeeds.
+                Deletes the asset library.
             operationId: deleteAssetLibrary
             parameters:
                 - in: path
@@ -386,7 +392,7 @@ paths:
         patch:
             description:
                 Updates the asset library using only the fields received in the request body. Any other fields are left
-                untouched. Returns the updated asset library.
+                untouched.
             operationId: patchAssetLibrary
             parameters:
                 - in: path
@@ -417,8 +423,8 @@ paths:
             tags: ["AssetLibrary"]
         put:
             description:
-                Replaces the user asset library with information sent in the request body. Any missing fields are
-                deleted unless they are required.
+                Replaces the asset library with information sent in the request body. Any missing fields are deleted
+                unless they are required.
             operationId: putAssetLibrary
             parameters:
                 - in: path
@@ -454,7 +460,7 @@ paths:
     "/asset-libraries/{assetLibraryId}/sites":
         get:
             description:
-                TODO
+                Get the asset library's connected sites. Results can be paginated, filtered, searched, and sorted.
             operationId: getAssetLibrarySitesPage
             parameters:
                 - in: path
@@ -484,6 +490,10 @@ paths:
                   schema:
                       type: integer
                 - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
                   name: sort
                   schema:
                       type: string
@@ -506,7 +516,7 @@ paths:
     "/asset-libraries/{assetLibraryId}/sites/{siteId}":
         delete:
             description:
-                Removes an asset library link with the received asset library and site ids. Returns the asset library.
+                Disconnects the site from the asset library.
             operationId: deleteAssetLibrarySite
             parameters:
                 - in: path
@@ -531,7 +541,7 @@ paths:
             tags: ["Site"]
         post:
             description:
-                Adds an asset library link with the received asset library and site ids. Returns the asset library.
+                Connects the site to the asset library.
             operationId: postAssetLibrarySite
             parameters:
                 - in: path
@@ -561,7 +571,7 @@ paths:
     "/asset-libraries/{assetLibraryId}/user-accounts":
         get:
             description:
-                Retrieves the asset library usera. Results can be paginated, filtered, searched, and sorted.
+                Get the asset library associated users. Results can be paginated, filtered, searched, and sorted.
             operationId: getAssetLibraryUserAccountsPage
             parameters:
                 - in: path
@@ -591,6 +601,10 @@ paths:
                   schema:
                       type: integer
                 - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
                   name: sort
                   schema:
                       type: string
@@ -609,7 +623,7 @@ paths:
     "/asset-libraries/{assetLibraryId}/user-accounts/{userId}":
         delete:
             description:
-                Removes the user from the asset library. Returns the asset library.
+                Removes the association between the user and the asset library.
             operationId: deleteAssetLibraryUserAccountUser
             parameters:
                 - in: path
@@ -634,7 +648,7 @@ paths:
             tags: ["UserAccount"]
         post:
             description:
-                Adds the user to the asset library. Returns the asset library.
+                Adds the association between the user and the asset library.
             operationId: postAssetLibraryUserAccountUser
             parameters:
                 - in: path
@@ -664,7 +678,7 @@ paths:
     "/asset-libraries/{assetLibraryId}/user-groups":
         get:
             description:
-                Retrieves the asset library user groups. Results can be paginated, filtered, searched, and sorted.
+                Get the asset library associated user groups. Results can be paginated, filtered, searched, and sorted.
             operationId: getAssetLibraryUserGroupsPage
             parameters:
                 - in: path
@@ -694,6 +708,10 @@ paths:
                   schema:
                       type: integer
                 - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
                   name: sort
                   schema:
                       type: string
@@ -712,7 +730,7 @@ paths:
     "/asset-libraries/{assetLibraryId}/user-groups/{userGroupId}":
         delete:
             description:
-                Removes the user group from the asset library. Returns the asset library.
+                Removes the association between the user group and the asset library.
             operationId: deleteAssetLibraryUserGroup
             parameters:
                 - in: path
@@ -737,7 +755,7 @@ paths:
             tags: ["UserGroup"]
         post:
             description:
-                Adds the user group to the asset library. Returns the asset library.
+                Adds the association between the user group and the asset library.
             operationId: postAssetLibraryUserGroup
             parameters:
                 - in: path
