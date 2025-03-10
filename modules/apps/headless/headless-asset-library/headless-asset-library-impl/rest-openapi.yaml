@@ -532,12 +532,18 @@ paths:
                       format: int64
                       type: integer
             responses:
-                204:
+                200:
                     content:
-                        application/json: {}
-                        application/xml: {}
-                    description:
-                        default response
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Site"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Site"
+                                type: array
             tags: ["Site"]
         post:
             description:
@@ -647,10 +653,18 @@ paths:
                       format: int64
                       type: integer
             responses:
-                204:
+                200:
                     content:
-                        application/json: {}
-                        application/xml: {}
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/UserAccount"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/UserAccount"
+                                type: array
                     description:
                         default response
             tags: ["UserAccount"]
@@ -762,10 +776,18 @@ paths:
                       format: int64
                       type: integer
             responses:
-                204:
+                200:
                     content:
-                        application/json: {}
-                        application/xml: {}
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/UserGroup"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/UserGroup"
+                                type: array
                     description:
                         default response
             tags: ["UserGroup"]
