@@ -18,70 +18,75 @@ components:
                     type: string
                 description:
                     description:
-                        The asset library's name.
-                    readOnly: true
+                        The asset library's description.
                     type: string
                 description_i18n:
                     additionalProperties:
                         type: string
+                    description:
+                        The localized asset library's description.
                     readOnly: true
                     type: object
                 externalReferenceCode:
+                    description:
+                        The asset library's external reference code.
                     type: string
                 id:
                     description:
-                        The asset library's site Id.
+                        The asset library's site ID.
                     format: int64
                     readOnly: true
                     type: integer
                 logo:
+                    description:
+                        The asset library's logo.
                     type: string
                 name:
                     description:
                         The asset library's name.
-                    readOnly: true
                     type: string
                 name_i18n:
                     additionalProperties:
                         type: string
-                    readOnly: true
+                    description:
+                        The localized asset library's name.
                     type: object
                 numberOfUserAccounts:
                     description:
-                        The number of asset library's users.
+                        The number of this asset library's associated users.
                     readOnly: true
                     type: integer
                 numberOfUserGroups:
                     description:
-                        The number of asset library's users groups.
+                        The number of this asset library's associated user groups.
                     readOnly: true
                     type: integer
-                settingsBrief:
+                settings:
                     description:
-                        The asset library settings.
+                        The asset library's settings.
                     items:
-                        $ref: "#/components/schemas/SettingsBrief"
+                        $ref: "#/components/schemas/Settings"
                 sites:
                     description:
-                        The asset library connected sites.
+                        The asset library's connected sites.
                     items:
                         $ref: "#/components/schemas/Site"
                     type: array
                 userAccounts:
                     description:
-                        The asset library's users.
+                        The asset library's associated users.
                     items:
                         $ref: "#/components/schemas/UserAccount"
-                    readOnly: true
                     type: array
                 userGroups:
                     description:
-                        The asset library's user groups.
+                        The asset library's associated user groups.
                     items:
                         $ref: "#/components/schemas/UserGroup"
-                    readOnly: true
                     type: array
-        MimeTypeLimitBrief:
+        MimeTypeLimit:
+            description:
+                Represents the maximum size of an asset library's associated mime type.
             properties:
                 maximumSize:
                     readOnly: true
@@ -112,6 +117,8 @@ components:
                 name_i18n:
                     additionalProperties:
                         type: string
+                    description:
+                        The localized role's name.
                     readOnly: true
                     type: object
                 roleType:
@@ -119,7 +126,9 @@ components:
                         The role's type.
                     readOnly: true
                     type: integer
-        SettingsBrief:
+        Settings:
+            description:
+                Represents the settings of an asset library.
             properties:
                 autoTaggingEnabled:
                     default: false
@@ -130,9 +139,9 @@ components:
                     type: array
                 defaultLanguageId:
                     type: string
-                mimeTypeLimitBriefs:
+                mimeTypeLimit:
                     items:
-                        $ref: "#/components/schemas/MimeTypeLimitBrief"
+                        $ref: "#/components/schemas/MimeTypeLimit"
                     type: array
                 sharingEnabled:
                     default: false
@@ -145,14 +154,20 @@ components:
                 Represents a site.
             properties:
                 externalReferenceCode:
+                    description:
+                        The site's external reference code.
+                    readOnly: true
                     type: string
                 id:
                     description:
-                        The site's Id.
+                        The site's ID.
                     format: int64
                     readOnly: true
                     type: integer
                 logo:
+                    description:
+                        The site's logo.
+                    readOnly: true
                     type: string
                 name:
                     description:
@@ -166,6 +181,7 @@ components:
                     type: object
                 searchable:
                     default: true
+                    readOnly: true
                     type: boolean
             type: object
         UserAccount:
@@ -173,11 +189,15 @@ components:
                 Represents a user.
             properties:
                 externalReferenceCode:
+                    description:
+                        The user's external reference code
+                    readOnly: true
                     type: string
                 id:
                     description:
                         The user's ID.
                     format: int64
+                    readOnly: true
                     type: integer
                 image:
                     description:
@@ -202,11 +222,15 @@ components:
                 Represents a user group.
             properties:
                 externalReferenceCode:
+                    description:
+                        The user group's external reference code.
+                    readOnly: true
                     type: string
                 id:
                     description:
                         The user group's ID.
                     format: int64
+                    readOnly: true
                     type: integer
                 name:
                     description:
