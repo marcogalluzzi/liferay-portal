@@ -561,10 +561,14 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/Site"
+                                items:
+                                    $ref: "#/components/schemas/Site"
+                                type: array
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/Site"
+                                items:
+                                    $ref: "#/components/schemas/Site"
+                                type: array
                     description:
                         default response
             tags: ["Site"]
@@ -672,10 +676,14 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/UserAccount"
+                                items:
+                                    $ref: "#/components/schemas/UserAccount"
+                                type: array
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/UserAccount"
+                                items:
+                                    $ref: "#/components/schemas/UserAccount"
+                                type: array
                     description:
                         default response
             tags: ["UserAccount"]
@@ -783,10 +791,14 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/UserGroup"
+                                items:
+                                    $ref: "#/components/schemas/UserGroup"
+                                type: array
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/UserGroup"
+                                items:
+                                    $ref: "#/components/schemas/UserGroup"
+                                type: array
                     description:
                         default response
             tags: ["UserGroup"]
