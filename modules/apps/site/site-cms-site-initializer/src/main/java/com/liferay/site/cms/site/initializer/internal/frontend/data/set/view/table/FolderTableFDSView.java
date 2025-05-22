@@ -18,13 +18,13 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Sam Ziemer
+ * @author Marco Galluzzi
  */
 @Component(
-	property = "frontend.data.set.name=" + CMSSiteInitializerFDSNames.CONTENTS_SECTION,
+	property = "frontend.data.set.name=" + CMSSiteInitializerFDSNames.VIEW_FOLDER,
 	service = FDSView.class
 )
-public class ContentsSectionTableFDSView extends BaseTableFDSView {
+public class FolderTableFDSView extends BaseTableFDSView {
 
 	@Override
 	public FDSTableSchema getFDSTableSchema(Locale locale) {
@@ -44,10 +44,6 @@ public class ContentsSectionTableFDSView extends BaseTableFDSView {
 			"embedded.objectDefinitionName", "type",
 			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(
 				"typeTableCellRenderer")
-		).add(
-			"embedded.scopeKey", "space",
-			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(
-				"spaceTableCellRenderer")
 		).add(
 			"embedded.creator.name", "author",
 			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(

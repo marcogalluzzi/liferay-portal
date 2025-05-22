@@ -10,10 +10,11 @@ import com.liferay.fragment.renderer.FragmentRenderer;
 import com.liferay.fragment.renderer.FragmentRendererContext;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
+import com.liferay.object.service.ObjectEntryFolderLocalService;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.site.cms.site.initializer.internal.display.context.AllSectionDisplayContext;
+import com.liferay.site.cms.site.initializer.internal.display.context.ViewFolderDisplayContext;
 
 import java.io.IOException;
 
@@ -28,10 +29,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Jürgen Kappler
+ * @author Marco Galluzzi
  */
 @Component(service = FragmentRenderer.class)
-public class AllSectionFragmentRenderer extends BaseSectionFragmentRenderer {
+public class ViewFolderFragmentRenderer extends BaseSectionFragmentRenderer {
 
 	@Override
 	public String getCollectionKey() {
@@ -40,7 +41,7 @@ public class AllSectionFragmentRenderer extends BaseSectionFragmentRenderer {
 
 	@Override
 	public String getLabel(Locale locale) {
-		return _language.get(locale, "all-section");
+		return _language.get(locale, "view-folder");
 	}
 
 	@Override
@@ -52,14 +53,15 @@ public class AllSectionFragmentRenderer extends BaseSectionFragmentRenderer {
 
 		try {
 			RequestDispatcher requestDispatcher =
-				_servletContext.getRequestDispatcher("/all_section.jsp");
+				_servletContext.getRequestDispatcher("/view_folder.jsp");
 
 			httpServletRequest.setAttribute(
-				AllSectionDisplayContext.class.getName(),
-				new AllSectionDisplayContext(
+				ViewFolderDisplayContext.class.getName(),
+				new ViewFolderDisplayContext(
 					_depotEntryLocalService, _groupLocalService,
 					httpServletRequest, _language, _objectDefinitionService,
-					_objectDefinitionSettingLocalService, _portal));
+					_objectDefinitionSettingLocalService,
+					_objectEntryFolderLocalService, _portal));
 
 			requestDispatcher.include(httpServletRequest, httpServletResponse);
 		}
@@ -83,6 +85,9 @@ public class AllSectionFragmentRenderer extends BaseSectionFragmentRenderer {
 	@Reference
 	private ObjectDefinitionSettingLocalService
 		_objectDefinitionSettingLocalService;
+
+	@Reference
+	private ObjectEntryFolderLocalService _objectEntryFolderLocalService;
 
 	@Reference
 	private Portal _portal;
