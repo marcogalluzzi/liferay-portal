@@ -10,10 +10,10 @@ import com.liferay.fragment.renderer.FragmentRenderer;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -56,35 +56,11 @@ public class ViewStructuresDisplayContextTest
 		List<DropdownItem> dropdownItems = (List<DropdownItem>)creationMenu.get(
 			"primaryItems");
 
-		Map<String, String> expectedCreationMenuItems =
-			LinkedHashMapBuilder.put(
-				"content",
-				GroupConstants.CMS_FRIENDLY_URL +
-					"/structure-builder?objectFolderExternalReferenceCode=" +
-						"L_CMS_CONTENT_STRUCTURES"
-			).put(
-				"file",
-				GroupConstants.CMS_FRIENDLY_URL +
-					"/structure-builder?objectFolderExternalReferenceCode=" +
-						"L_CMS_FILE_TYPES"
-			).build();
+		Assert.assertEquals(dropdownItems.toString(), 2, dropdownItems.size());
 
-		Assert.assertEquals(
-			dropdownItems.toString(), expectedCreationMenuItems.size(),
-			dropdownItems.size());
-
-		int index = 0;
-
-		for (Map.Entry<String, String> entry :
-				expectedCreationMenuItems.entrySet()) {
-
-			DropdownItem dropdownItem = dropdownItems.get(index);
-
-			Assert.assertEquals(entry.getKey(), dropdownItem.get("label"));
-			Assert.assertEquals(entry.getValue(), dropdownItem.get("href"));
-
-			index++;
-		}
+		_assertDropdownItem(
+			dropdownItems.get(0), "content", "L_CMS_CONTENT_STRUCTURES");
+		_assertDropdownItem(dropdownItems.get(1), "file", "L_CMS_FILE_TYPES");
 	}
 
 	@Test
@@ -119,6 +95,19 @@ public class ViewStructuresDisplayContextTest
 		_assertFDSActionDropdownItem(
 			fdsActionDropdownItems.get(6), "trash", "delete", "delete",
 			"delete", Map.of("system", false));
+	}
+
+	private void _assertDropdownItem(
+		DropdownItem dropdownItem, String expectedKey,
+		String objectFolderExternalReferenceCode) {
+
+		Assert.assertEquals(expectedKey, dropdownItem.get("label"));
+		Assert.assertEquals(
+			StringBundler.concat(
+				GroupConstants.CMS_FRIENDLY_URL,
+				"/structure-builder?objectFolderExternalReferenceCode=",
+				objectFolderExternalReferenceCode),
+			dropdownItem.get("href"));
 	}
 
 	private void _assertFDSActionDropdownItem(
