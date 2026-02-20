@@ -40,18 +40,21 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -208,7 +211,7 @@ public abstract class BaseSectionDisplayContextTestCase
 							StringPool.BLANK, Collections.emptyMap(),
 							themeDisplay,
 							RequestBackedPortletURLFactoryUtil.create(
-								getMockHttpServletRequest()));
+								mockHttpServletRequest));
 
 					Map<String, Object> data =
 						contentItemCommentEditorConfiguration.getData();
@@ -299,6 +302,39 @@ public abstract class BaseSectionDisplayContextTestCase
 				"hideSpace", true
 			).build(),
 			_getBreadcrumbProps(httpServletRequest));
+	}
+
+	@Test
+	public void testGetCMSSectionFilterString() throws Exception {
+		DepotEntry depotEntry1 = addDepotEntry(
+			StringUtil.randomString(), TestPropsValues.getUserId());
+
+		User user = UserTestUtil.addUser(
+			companyLocalService.getCompany(TestPropsValues.getCompanyId()),
+			RoleConstants.CMS_ADMINISTRATOR);
+
+		DepotEntry depotEntry2 = addDepotEntry(
+			StringUtil.randomString(), user.getUserId());
+
+		Object displayContext = getSectionDisplayContext(
+			getMockHttpServletRequest(TestPropsValues.getUser()));
+
+		String filterString = getCMSSectionFilterString(displayContext);
+
+		Assert.assertTrue(
+			filterString.contains(
+				"groupIds/any(g:g in (" + depotEntry1.getGroupId() + "))"));
+
+		displayContext = getSectionDisplayContext(
+			getMockHttpServletRequest(user));
+
+		filterString = getCMSSectionFilterString(displayContext);
+
+		Assert.assertFalse(filterString.contains("groupIds/any"));
+
+		_depotEntryLocalService.deleteDepotEntry(depotEntry1);
+		_depotEntryLocalService.deleteDepotEntry(depotEntry2);
+		_userLocalService.deleteUser(user);
 	}
 
 	@Test
@@ -444,6 +480,27 @@ public abstract class BaseSectionDisplayContextTestCase
 				LocaleUtil.getDefault(), StringUtil.randomString()
 			).build(),
 			type, ServiceContextTestUtil.getServiceContext(group.getGroupId()));
+	}
+
+	protected DepotEntry addDepotEntry(String name, long userId)
+		throws Exception {
+
+		return _depotEntryLocalService.addDepotEntry(
+			HashMapBuilder.put(
+				LocaleUtil.getDefault(), name
+			).build(),
+			HashMapBuilder.put(
+				LocaleUtil.getDefault(), StringUtil.randomString()
+			).build(),
+			DepotConstants.TYPE_SPACE,
+			ServiceContextTestUtil.getServiceContext(
+				group.getGroupId(), userId));
+	}
+
+	protected String getCMSSectionFilterString(Object displayContext) {
+		return ReflectionTestUtil.invoke(
+			displayContext, "getCMSSectionFilterString", new Class<?>[0],
+			new Object[0]);
 	}
 
 	protected CreationMenu getCreationMenu() throws Exception {
@@ -962,5 +1019,8 @@ public abstract class BaseSectionDisplayContextTestCase
 	@Inject
 	private TranslationInfoItemFieldValuesExporterRegistry
 		_translationInfoItemFieldValuesExporterRegistry;
+
+	@Inject
+	private UserLocalService _userLocalService;
 
 }
