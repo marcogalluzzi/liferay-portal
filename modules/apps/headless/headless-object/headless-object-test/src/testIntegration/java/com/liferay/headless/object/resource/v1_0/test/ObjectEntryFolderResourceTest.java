@@ -41,14 +41,12 @@ import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
-import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceWrapper;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
-import com.liferay.portal.kernel.test.util.FeatureFlagTestUtil;
 import com.liferay.portal.kernel.test.util.HTTPTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.RoleTestUtil;
@@ -78,7 +76,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -100,25 +97,6 @@ public class ObjectEntryFolderResourceTest
 	public static void setUpClass() throws Exception {
 		BaseObjectEntryFolderResourceTestCase.setUpClass();
 		CMSTestUtil.getOrAddGroup(ObjectEntryFolderResourceTest.class);
-
-		FeatureFlagTestUtil.invokeFeatureFlagListeners(
-			TestPropsValues.getCompanyId(), true, "LPD-17564");
-
-		Role cmsAdministratorRole = RoleLocalServiceUtil.fetchRole(
-			TestPropsValues.getCompanyId(), RoleConstants.CMS_ADMINISTRATOR);
-
-		if (cmsAdministratorRole == null) {
-			RoleLocalServiceUtil.addRole(
-				null, TestPropsValues.getUserId(), null, 0,
-				RoleConstants.CMS_ADMINISTRATOR, null, null,
-				RoleConstants.TYPE_REGULAR, null, null);
-		}
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-		FeatureFlagTestUtil.invokeFeatureFlagListeners(
-			TestPropsValues.getCompanyId(), false, "LPD-17564");
 	}
 
 	@Before
