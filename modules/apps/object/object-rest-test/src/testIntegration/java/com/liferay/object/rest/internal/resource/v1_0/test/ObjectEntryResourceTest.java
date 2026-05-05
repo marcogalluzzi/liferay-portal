@@ -7296,7 +7296,7 @@ public class ObjectEntryResourceTest {
 			_userGroupRoleLocalService.addUserGroupRole(
 				_user.getUserId(), _depotEntry.getGroupId(), role.getRoleId());
 
-		JSONObject jsonObject = _getObjectEntryActionsJSONObject(
+		JSONObject jsonObject = _getActionsJSONObject(
 			_objectDefinition5, _objectEntry6, _user, _password);
 
 		Assert.assertTrue(jsonObject.has("share"));
@@ -7312,7 +7312,7 @@ public class ObjectEntryResourceTest {
 		userGroupRole = _userGroupRoleLocalService.addUserGroupRole(
 			_user.getUserId(), _depotEntry.getGroupId(), role.getRoleId());
 
-		jsonObject = _getObjectEntryActionsJSONObject(
+		jsonObject = _getActionsJSONObject(
 			_objectDefinition5, _objectEntry6, _user, _password);
 
 		Assert.assertFalse(jsonObject.has("share"));
@@ -7328,7 +7328,7 @@ public class ObjectEntryResourceTest {
 			ServiceContextTestUtil.getServiceContext(
 				_depotEntry.getGroupId(), TestPropsValues.getUserId()));
 
-		jsonObject = _getObjectEntryActionsJSONObject(
+		jsonObject = _getActionsJSONObject(
 			_objectDefinition5, _objectEntry6, _user, _password);
 
 		_sharingEntryLocalService.deleteSharingEntry(
@@ -7345,7 +7345,7 @@ public class ObjectEntryResourceTest {
 
 		_roleLocalService.addUserRole(_user.getUserId(), role.getRoleId());
 
-		jsonObject = _getObjectEntryActionsJSONObject(
+		jsonObject = _getActionsJSONObject(
 			_objectDefinition5, _objectEntry6, _user, _password);
 
 		Assert.assertTrue(jsonObject.has("share"));
@@ -7360,14 +7360,14 @@ public class ObjectEntryResourceTest {
 				_depotEntry.getGroupId(), _user.getUserId()),
 			_user.getUserId());
 
-		jsonObject = _getObjectEntryActionsJSONObject(
+		jsonObject = _getActionsJSONObject(
 			_objectDefinition5, objectEntry, _user, _password);
 
 		Assert.assertTrue(jsonObject.has("share"));
 
 		// Without role
 
-		jsonObject = _getObjectEntryActionsJSONObject(
+		jsonObject = _getActionsJSONObject(
 			_objectDefinition5, _objectEntry6, _user, _password);
 
 		Assert.assertFalse(jsonObject.has("share"));
@@ -16815,7 +16815,7 @@ public class ObjectEntryResourceTest {
 			null, null);
 	}
 
-	private JSONObject _getObjectEntryActionsJSONObject(
+	private JSONObject _getActionsJSONObject(
 			ObjectDefinition objectDefinition, ObjectEntry objectEntry,
 			User user, String password)
 		throws Exception {
