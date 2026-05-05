@@ -15587,70 +15587,6 @@ public class ObjectEntryResourceTest {
 			"siteId");
 	}
 
-	private static ObjectEntry _addObjectEntry(
-			DepotEntry depotEntry, ObjectDefinition objectDefinition,
-			ObjectEntryFolder objectEntryFolder, ServiceContext serviceContext,
-			long userId)
-		throws Exception {
-
-		return _objectEntryLocalService.addObjectEntry(
-			depotEntry.getGroupId(), userId,
-			objectDefinition.getObjectDefinitionId(),
-			objectEntryFolder.getObjectEntryFolderId(), "en_US",
-			HashMapBuilder.<String, Serializable>put(
-				"title_i18n",
-				HashMapBuilder.put(
-					"en_US", RandomTestUtil.randomString()
-				).build()
-			).build(),
-			serviceContext);
-	}
-
-	private static ObjectEntryFolder _addObjectEntryFolder(
-			DepotEntry depotEntry, ServiceContext serviceContext, long userId)
-		throws Exception {
-
-		ObjectEntryFolder objectEntryFolder =
-			_objectEntryFolderLocalService.
-				getObjectEntryFolderByExternalReferenceCode(
-					ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_CONTENTS,
-					depotEntry.getGroupId(), depotEntry.getCompanyId());
-
-		return _objectEntryFolderLocalService.addObjectEntryFolder(
-			null, depotEntry.getGroupId(), userId,
-			objectEntryFolder.getObjectEntryFolderId(),
-			RandomTestUtil.randomString(),
-			HashMapBuilder.put(
-				LocaleUtil.getDefault(), RandomTestUtil.randomString()
-			).build(),
-			RandomTestUtil.randomString(), serviceContext);
-	}
-
-	private static User _addUser(String userName, String userPassword)
-		throws Exception {
-
-		String upperCaseFirstLetterUserName = StringUtil.upperCaseFirstLetter(
-			userName);
-
-		User user = UserTestUtil.addUser(
-			TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
-			userPassword, userName + "@liferay.com", userName,
-			LocaleUtil.getDefault(), upperCaseFirstLetterUserName,
-			upperCaseFirstLetterUserName, null,
-			ServiceContextTestUtil.getServiceContext());
-
-		user.setEmailAddressVerified(true);
-
-		return UserLocalServiceUtil.updateUser(user);
-	}
-
-	private static void _setUpPermissionThreadLocal(User user) {
-		PrincipalThreadLocal.setName(user.getUserId());
-
-		PermissionThreadLocal.setPermissionChecker(
-			PermissionCheckerFactoryUtil.create(user));
-	}
-
 	private void _addCMSGroup() throws Exception {
 
 		// These tests require the instance to be created with the feature
@@ -15772,6 +15708,45 @@ public class ObjectEntryResourceTest {
 			false);
 	}
 
+	private ObjectEntry _addObjectEntry(
+			DepotEntry depotEntry, ObjectDefinition objectDefinition,
+			ObjectEntryFolder objectEntryFolder, ServiceContext serviceContext,
+			long userId)
+		throws Exception {
+
+		return _objectEntryLocalService.addObjectEntry(
+			depotEntry.getGroupId(), userId,
+			objectDefinition.getObjectDefinitionId(),
+			objectEntryFolder.getObjectEntryFolderId(), "en_US",
+			HashMapBuilder.<String, Serializable>put(
+				"title_i18n",
+				HashMapBuilder.put(
+					"en_US", RandomTestUtil.randomString()
+				).build()
+			).build(),
+			serviceContext);
+	}
+
+	private ObjectEntryFolder _addObjectEntryFolder(
+			DepotEntry depotEntry, ServiceContext serviceContext, long userId)
+		throws Exception {
+
+		ObjectEntryFolder objectEntryFolder =
+			_objectEntryFolderLocalService.
+				getObjectEntryFolderByExternalReferenceCode(
+					ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_CONTENTS,
+					depotEntry.getGroupId(), depotEntry.getCompanyId());
+
+		return _objectEntryFolderLocalService.addObjectEntryFolder(
+			null, depotEntry.getGroupId(), userId,
+			objectEntryFolder.getObjectEntryFolderId(),
+			RandomTestUtil.randomString(),
+			HashMapBuilder.put(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()
+			).build(),
+			RandomTestUtil.randomString(), serviceContext);
+	}
+
 	private ObjectRelationship _addObjectRelationship(long companyId)
 		throws Exception {
 
@@ -15884,6 +15859,24 @@ public class ObjectEntryResourceTest {
 			objectDefinition.getPortletId(),
 			TempFileEntryUtil.getTempFileName(title + ".txt"),
 			FileUtil.createTempFile(content), ContentTypes.TEXT_PLAIN);
+	}
+
+	private User _addUser(String userName, String userPassword)
+		throws Exception {
+
+		String upperCaseFirstLetterUserName = StringUtil.upperCaseFirstLetter(
+			userName);
+
+		User user = UserTestUtil.addUser(
+			TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
+			userPassword, userName + "@liferay.com", userName,
+			LocaleUtil.getDefault(), upperCaseFirstLetterUserName,
+			upperCaseFirstLetterUserName, null,
+			ServiceContextTestUtil.getServiceContext());
+
+		user.setEmailAddressVerified(true);
+
+		return UserLocalServiceUtil.updateUser(user);
 	}
 
 	private void _assertAttachmentJSONObject(
@@ -16368,6 +16361,32 @@ public class ObjectEntryResourceTest {
 		return responseJSONObject.getJSONObject("actions");
 	}
 
+	private JSONObject _getActionsJSONObject(
+			ObjectDefinition objectDefinition, ObjectEntry objectEntry,
+			User user, String password)
+		throws Exception {
+
+		AtomicReference<JSONObject> atomicReference = new AtomicReference<>();
+
+		HTTPTestUtil.customize(
+		).withCredentials(
+			user.getEmailAddress(), password
+		).apply(
+			() -> {
+				JSONObject responseJSONObject = HTTPTestUtil.invokeToJSONObject(
+					null,
+					objectDefinition.getRESTContextPath() + StringPool.SLASH +
+						objectEntry.getObjectEntryId(),
+					Http.Method.GET);
+
+				atomicReference.set(
+					responseJSONObject.getJSONObject("actions"));
+			}
+		);
+
+		return atomicReference.get();
+	}
+
 	private Map<String, String> _getActionValue(String href, String method) {
 		return HashMapBuilder.put(
 			"href", href
@@ -16807,31 +16826,6 @@ public class ObjectEntryResourceTest {
 		return new NestedFieldsContext(
 			1, null, ListUtil.fromString(nestedFields, StringPool.COMMA), null,
 			null, null);
-	}
-
-	private JSONObject _getActionsJSONObject(
-			ObjectDefinition objectDefinition, ObjectEntry objectEntry,
-			User user, String password)
-		throws Exception {
-
-		AtomicReference<JSONObject> atomicReference = new AtomicReference<>();
-
-		HTTPTestUtil.customize(
-		).withCredentials(
-			user.getEmailAddress(), password
-		).apply(
-			() -> {
-				JSONObject responseJSONObject = HTTPTestUtil.invokeToJSONObject(
-					null,
-					objectDefinition.getRESTContextPath() + StringPool.SLASH +
-								objectEntry.getObjectEntryId(), Http.Method.GET);
-
-				atomicReference.set(
-					responseJSONObject.getJSONObject("actions"));
-			}
-		);
-
-		return atomicReference.get();
 	}
 
 	private JSONObject _getObjectEntryJSONObject(
@@ -17342,6 +17336,13 @@ public class ObjectEntryResourceTest {
 			});
 
 		objectEntry.setProperties(properties);
+	}
+
+	private void _setUpPermissionThreadLocal(User user) {
+		PrincipalThreadLocal.setName(user.getUserId());
+
+		PermissionThreadLocal.setPermissionChecker(
+			PermissionCheckerFactoryUtil.create(user));
 	}
 
 	private void _testDeleteObjectEntryWithComments(
