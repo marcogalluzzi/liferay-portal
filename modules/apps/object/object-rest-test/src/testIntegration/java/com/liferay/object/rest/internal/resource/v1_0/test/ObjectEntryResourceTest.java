@@ -16820,10 +16820,24 @@ public class ObjectEntryResourceTest {
 			User user, String password)
 		throws Exception {
 
-		return _invokeGetActionsJSONObject(
-			objectDefinition.getRESTContextPath() + StringPool.SLASH +
-				objectEntry.getObjectEntryId(),
-			user, password);
+		AtomicReference<JSONObject> atomicReference = new AtomicReference<>();
+
+		HTTPTestUtil.customize(
+		).withCredentials(
+			user.getEmailAddress(), password
+		).apply(
+			() -> {
+				JSONObject responseJSONObject = HTTPTestUtil.invokeToJSONObject(
+					null,
+					objectDefinition.getRESTContextPath() + StringPool.SLASH +
+								objectEntry.getObjectEntryId(), Http.Method.GET);
+
+				atomicReference.set(
+					responseJSONObject.getJSONObject("actions"));
+			}
+		);
+
+		return atomicReference.get();
 	}
 
 	private JSONObject _getObjectEntryJSONObject(
@@ -17031,28 +17045,6 @@ public class ObjectEntryResourceTest {
 				setValues(() -> objectEntry);
 			}
 		};
-	}
-
-	private JSONObject _invokeGetActionsJSONObject(
-			String path, User user, String password)
-		throws Exception {
-
-		AtomicReference<JSONObject> atomicReference = new AtomicReference<>();
-
-		HTTPTestUtil.customize(
-		).withCredentials(
-			user.getEmailAddress(), password
-		).apply(
-			() -> {
-				JSONObject responseJSONObject = HTTPTestUtil.invokeToJSONObject(
-					null, path, Http.Method.GET);
-
-				atomicReference.set(
-					responseJSONObject.getJSONObject("actions"));
-			}
-		);
-
-		return atomicReference.get();
 	}
 
 	private JSONObject
