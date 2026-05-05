@@ -340,8 +340,6 @@ public class ObjectEntryResourceTest {
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
-
-		_setUpCMSTestEnvironment();
 	}
 
 	@AfterClass
@@ -7285,6 +7283,34 @@ public class ObjectEntryResourceTest {
 	@Test
 	@TestInfo("LPD-83639")
 	public void testGetObjectEntryShareAction() throws Exception {
+		CMSTestUtil.getOrAddGroup(ObjectEntryResourceTest.class);
+
+		DepotEntry depotEntry = _depotEntryLocalService.addDepotEntry(
+			RandomTestUtil.randomLocaleStringMap(),
+			RandomTestUtil.randomLocaleStringMap(), DepotConstants.TYPE_SPACE,
+			ServiceContextTestUtil.getServiceContext());
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					"L_CMS_BASIC_WEB_CONTENT", TestPropsValues.getCompanyId());
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(depotEntry.getGroupId());
+
+		serviceContext.setAttribute(
+			"friendlyUrlMap", new HashMap<String, String>());
+
+		ObjectEntryFolder objectEntryFolder = _addObjectEntryFolder(
+			depotEntry, serviceContext, depotEntry.getUserId());
+
+		ObjectEntry objectEntry1 = _addObjectEntry(
+			depotEntry, objectDefinition, objectEntryFolder, serviceContext,
+			depotEntry.getUserId());
+
+		String password = RandomTestUtil.randomString();
+
+		User user = _addUser(RandomTestUtil.randomString(), password);
 
 		// With asset library administrator role
 
@@ -7294,10 +7320,10 @@ public class ObjectEntryResourceTest {
 
 		UserGroupRole userGroupRole =
 			_userGroupRoleLocalService.addUserGroupRole(
-				_user.getUserId(), _depotEntry.getGroupId(), role.getRoleId());
+				user.getUserId(), depotEntry.getGroupId(), role.getRoleId());
 
 		JSONObject jsonObject = _getActionsJSONObject(
-			_objectDefinition5, _objectEntry6, _user, _password);
+			objectDefinition, objectEntry1, user, password);
 
 		Assert.assertTrue(jsonObject.has("share"));
 
@@ -7310,26 +7336,26 @@ public class ObjectEntryResourceTest {
 			DepotRolesConstants.ASSET_LIBRARY_CONTENT_REVIEWER);
 
 		userGroupRole = _userGroupRoleLocalService.addUserGroupRole(
-			_user.getUserId(), _depotEntry.getGroupId(), role.getRoleId());
+			user.getUserId(), depotEntry.getGroupId(), role.getRoleId());
 
 		jsonObject = _getActionsJSONObject(
-			_objectDefinition5, _objectEntry6, _user, _password);
+			objectDefinition, objectEntry1, user, password);
 
 		Assert.assertFalse(jsonObject.has("share"));
 
 		// With asset library content reviewer role and shared object entry
 
 		SharingEntry sharingEntry = _sharingEntryLocalService.addSharingEntry(
-			null, TestPropsValues.getUserId(), 0, 0, _user.getUserId(),
+			null, TestPropsValues.getUserId(), 0, 0, user.getUserId(),
 			_classNameLocalService.getClassNameId(
-				_objectEntry6.getModelClassName()),
-			_objectEntry6.getObjectEntryId(), _depotEntry.getGroupId(), true,
+				objectEntry1.getModelClassName()),
+			objectEntry1.getObjectEntryId(), depotEntry.getGroupId(), true,
 			List.of(SharingEntryAction.VIEW), null,
 			ServiceContextTestUtil.getServiceContext(
-				_depotEntry.getGroupId(), TestPropsValues.getUserId()));
+				depotEntry.getGroupId(), TestPropsValues.getUserId()));
 
 		jsonObject = _getActionsJSONObject(
-			_objectDefinition5, _objectEntry6, _user, _password);
+			objectDefinition, objectEntry1, user, password);
 
 		_sharingEntryLocalService.deleteSharingEntry(
 			sharingEntry.getSharingEntryId());
@@ -7343,32 +7369,32 @@ public class ObjectEntryResourceTest {
 		role = _roleLocalService.fetchRole(
 			TestPropsValues.getCompanyId(), RoleConstants.CMS_ADMINISTRATOR);
 
-		_roleLocalService.addUserRole(_user.getUserId(), role.getRoleId());
+		_roleLocalService.addUserRole(user.getUserId(), role.getRoleId());
 
 		jsonObject = _getActionsJSONObject(
-			_objectDefinition5, _objectEntry6, _user, _password);
+			objectDefinition, objectEntry1, user, password);
 
 		Assert.assertTrue(jsonObject.has("share"));
 
-		_roleLocalService.deleteUserRole(_user.getUserId(), role.getRoleId());
+		_roleLocalService.deleteUserRole(user.getUserId(), role.getRoleId());
 
 		// With user as creator
 
-		ObjectEntry objectEntry = _addObjectEntry(
-			_depotEntry, _objectDefinition5, _objectEntryFolder,
+		ObjectEntry objectEntry2 = _addObjectEntry(
+			depotEntry, objectDefinition, objectEntryFolder,
 			ServiceContextTestUtil.getServiceContext(
-				_depotEntry.getGroupId(), _user.getUserId()),
-			_user.getUserId());
+				depotEntry.getGroupId(), user.getUserId()),
+			user.getUserId());
 
 		jsonObject = _getActionsJSONObject(
-			_objectDefinition5, objectEntry, _user, _password);
+			objectDefinition, objectEntry2, user, password);
 
 		Assert.assertTrue(jsonObject.has("share"));
 
 		// Without role
 
 		jsonObject = _getActionsJSONObject(
-			_objectDefinition5, _objectEntry6, _user, _password);
+			objectDefinition, objectEntry1, user, password);
 
 		Assert.assertFalse(jsonObject.has("share"));
 	}
@@ -15618,38 +15644,6 @@ public class ObjectEntryResourceTest {
 		return UserLocalServiceUtil.updateUser(user);
 	}
 
-	private static void _setUpCMSTestEnvironment() throws Exception {
-		_setUpPermissionThreadLocal(TestPropsValues.getUser());
-		CMSTestUtil.getOrAddGroup(ObjectEntryResourceTest.class);
-
-		_depotEntry = _depotEntryLocalService.addDepotEntry(
-			RandomTestUtil.randomLocaleStringMap(),
-			RandomTestUtil.randomLocaleStringMap(), DepotConstants.TYPE_SPACE,
-			ServiceContextTestUtil.getServiceContext());
-
-		_objectDefinition5 =
-			_objectDefinitionLocalService.
-				getObjectDefinitionByExternalReferenceCode(
-					"L_CMS_BASIC_WEB_CONTENT", TestPropsValues.getCompanyId());
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_depotEntry.getGroupId());
-
-		serviceContext.setAttribute(
-			"friendlyUrlMap", new HashMap<String, String>());
-
-		_objectEntryFolder = _addObjectEntryFolder(
-			_depotEntry, serviceContext, _depotEntry.getUserId());
-
-		_objectEntry6 = _addObjectEntry(
-			_depotEntry, _objectDefinition5, _objectEntryFolder, serviceContext,
-			_depotEntry.getUserId());
-
-		_password = RandomTestUtil.randomString();
-
-		_user = _addUser(RandomTestUtil.randomString(), _password);
-	}
-
 	private static void _setUpPermissionThreadLocal(User user) {
 		PrincipalThreadLocal.setName(user.getUserId());
 
@@ -21880,26 +21874,6 @@ public class ObjectEntryResourceTest {
 	private static final DateFormat _dateTimeDateFormat =
 		DateFormatFactoryUtil.getSimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-	private static DepotEntry _depotEntry;
-
-	@Inject
-	private static DepotEntryLocalService _depotEntryLocalService;
-
-	private static ObjectDefinition _objectDefinition5;
-
-	@Inject
-	private static ObjectDefinitionLocalService _objectDefinitionLocalService;
-
-	private static ObjectEntry _objectEntry6;
-	private static ObjectEntryFolder _objectEntryFolder;
-
-	@Inject
-	private static ObjectEntryFolderLocalService _objectEntryFolderLocalService;
-
-	@Inject
-	private static ObjectEntryLocalService _objectEntryLocalService;
-
-	private static String _password;
 	private static List<ServiceRegistration<?>> _serviceRegistrations;
 	private static TaxonomyCategoryResource _taxonomyCategoryResource;
 	private static final TestDLFileEntryModelListener
@@ -21907,7 +21881,6 @@ public class ObjectEntryResourceTest {
 	private static long _testGroupId;
 	private static final TestObjectEntryModelListener
 		_testObjectEntryModelListener = new TestObjectEntryModelListener();
-	private static User _user;
 
 	@Inject
 	private AssetVocabularyLocalService _assetVocabularyLocalService;
@@ -21920,6 +21893,9 @@ public class ObjectEntryResourceTest {
 
 	@Inject
 	private CompanyLocalService _companyLocalService;
+
+	@Inject
+	private DepotEntryLocalService _depotEntryLocalService;
 
 	@Inject
 	private DLAppLocalService _dlAppLocalService;
@@ -21968,6 +21944,9 @@ public class ObjectEntryResourceTest {
 	private ObjectDefinition _objectDefinition4;
 
 	@Inject
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Inject
 	private ObjectDefinitionSettingLocalService
 		_objectDefinitionSettingLocalService;
 
@@ -21976,6 +21955,12 @@ public class ObjectEntryResourceTest {
 	private ObjectEntry _objectEntry3;
 	private ObjectEntry _objectEntry4;
 	private ObjectEntry _objectEntry5;
+
+	@Inject
+	private ObjectEntryFolderLocalService _objectEntryFolderLocalService;
+
+	@Inject
+	private ObjectEntryLocalService _objectEntryLocalService;
 
 	@Inject
 	private ObjectEntryService _objectEntryService;
